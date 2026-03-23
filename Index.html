@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Project Brief — Client Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F5C518;
+    --gold-glow: #F5C51855;
+    --dark: #0D0D0D;
+    --dark2: #161616;
+    --dark3: #1F1F1F;
+    --dark4: #2A2A2A;
+    --white: #F0EDE8;
+    --muted: #888;
+    --border: #2E2E2E;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--dark); color: var(--white); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; opacity: 0.4; }
+
+  .hero { position: relative; padding: 80px 40px 60px; text-align: center; border-bottom: 1px solid var(--border); overflow: hidden; }
+  .hero::after { content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); width: 200px; height: 2px; background: var(--gold); box-shadow: 0 0 20px var(--gold); }
+  .badge { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold-glow); padding: 6px 18px; margin-bottom: 28px; background: #F5C51808; }
+  .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 8vw, 90px); line-height: 0.95; letter-spacing: 2px; color: var(--white); }
+  .hero h1 span { color: var(--gold); text-shadow: 0 0 40px var(--gold-glow); }
+  .hero p { margin-top: 20px; color: var(--muted); font-size: 14px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+
+  .progress-bar-wrap { position: sticky; top: 0; z-index: 100; background: var(--dark2); border-bottom: 1px solid var(--border); padding: 14px 40px; display: flex; align-items: center; gap: 16px; }
+  .progress-track { flex: 1; height: 3px; background: var(--dark4); border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--gold); box-shadow: 0 0 10px var(--gold); border-radius: 10px; transition: width 0.4s ease; width: 0%; }
+  .progress-label { font-size: 12px; color: var(--muted); letter-spacing: 1px; white-space: nowrap; }
+  .progress-label span { color: var(--gold); font-weight: 500; }
+
+  .container { max-width: 720px; margin: 0 auto; padding: 60px 24px 120px; position: relative; z-index: 1; }
+
+  .section-label { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; margin-top: 56px; }
+  .section-label:first-child { margin-top: 0; }
+  .section-number { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 3px; color: var(--gold); background: #F5C51810; border: 1px solid #F5C51830; padding: 4px 12px; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: var(--white); }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  .q-block { margin-bottom: 36px; animation: fadeUp 0.5s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .q-label { font-size: 15px; font-weight: 500; color: var(--white); margin-bottom: 6px; line-height: 1.5; }
+  .q-hint { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.6; }
+  .q-hint strong { color: var(--gold); font-weight: 500; }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .options.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .options.grid .full { grid-column: 1 / -1; }
+
+  .opt { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--dark3); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden; }
+  .opt::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--gold); transform: scaleY(0); transition: transform 0.2s ease; }
+  .opt:hover { border-color: #F5C51840; background: var(--dark4); }
+  .opt.selected { border-color: var(--gold); background: #F5C51808; box-shadow: 0 0 20px #F5C51812; }
+  .opt.selected::before { transform: scaleY(1); }
+  .opt input { display: none; }
+
+  .opt-dot { width: 18px; height: 18px; border: 1.5px solid var(--border); border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+  .opt.selected .opt-dot { border-color: var(--gold); background: var(--gold); box-shadow: 0 0 8px var(--gold-glow); }
+  .opt.selected .opt-dot::after { content: ''; width: 7px; height: 7px; background: var(--dark); border-radius: 50%; }
+
+  .opt-square { width: 18px; height: 18px; border: 1.5px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+  .opt.selected .opt-square { border-color: var(--gold); background: var(--gold); }
+  .opt.selected .opt-square::after { content: '✓'; font-size: 11px; color: var(--dark); font-weight: 700; }
+  .opt-text { font-size: 14px; color: var(--white); }
+
+  /* Custom "Other" text input */
+  .custom-wrap { display: none; margin-top: 2px; }
+  .custom-wrap.visible { display: block; animation: fadeUp 0.25s ease both; }
+  .custom-input { width: 100%; background: var(--dark4); border: 1px solid var(--gold-glow); border-left: 3px solid var(--gold); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 12px 16px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+  .custom-input:focus { border-color: var(--gold); box-shadow: 0 0 14px #F5C51818; }
+  .custom-input::placeholder { color: #555; font-style: italic; }
+
+  /* ── Colour Palette Builder (Q1) ── */
+  .palette-builder { display: none; margin-top: 16px; }
+  .palette-builder.visible { display: block; animation: fadeUp 0.3s ease both; }
+
+  .palette-title {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); font-weight: 500; margin-bottom: 14px;
+  }
+
+  .palette-swatches {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .swatch-card {
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--dark4); border: 1px solid var(--border);
+    padding: 14px; position: relative;
+  }
+
+  .swatch-preview {
+    width: 100%; height: 48px; border: 1px solid var(--border);
+    border-radius: 2px; cursor: pointer; transition: transform 0.15s;
+  }
+  .swatch-preview:hover { transform: scale(1.03); }
+
+  .swatch-color-input {
+    position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;
+  }
+
+  .swatch-hex {
+    background: var(--dark3); border: 1px solid var(--border);
+    border-bottom: 2px solid var(--gold-glow);
+    color: var(--white); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; padding: 7px 10px; outline: none; width: 100%;
+    letter-spacing: 1px; text-transform: uppercase;
+    transition: border-color 0.2s;
+  }
+  .swatch-hex:focus { border-bottom-color: var(--gold); }
+  .swatch-hex::placeholder { color: #444; font-style: italic; letter-spacing: 0; }
+
+  .swatch-name {
+    background: transparent; border: none; border-bottom: 1px solid var(--border);
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 11px; padding: 4px 2px; outline: none; width: 100%;
+    letter-spacing: 0.5px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .swatch-name:focus { border-bottom-color: var(--gold); color: var(--white); }
+  .swatch-name::placeholder { color: #333; }
+
+  .palette-add-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 11px; background: transparent;
+    border: 1px dashed var(--border); color: var(--muted);
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .palette-add-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .palette-note {
+    margin-top: 12px;
+    background: transparent; border: none; border-left: 3px solid var(--gold-glow);
+    color: var(--white); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; padding: 10px 14px; outline: none; width: 100%;
+    resize: none; line-height: 1.6; background: var(--dark4);
+    transition: border-color 0.2s;
+  }
+  .palette-note:focus { border-left-color: var(--gold); }
+  .palette-note::placeholder { color: #444; font-style: italic; }
+
+  /* ── Font fields (Q2) ── */
+  .font-fields { display: none; margin-top: 16px; }
+  .font-fields.visible { display: block; animation: fadeUp 0.3s ease both; }
+
+  .font-fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .font-field-group { display: flex; flex-direction: column; gap: 6px; }
+  .font-field-group.full { grid-column: 1 / -1; }
+
+  .field-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  .field-input, .field-select {
+    background: var(--dark4);
+    border: 1px solid var(--border);
+    border-bottom: 2px solid var(--gold-glow);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    appearance: none;
+  }
+
+  .field-input:focus, .field-select:focus { border-bottom-color: var(--gold); box-shadow: 0 4px 12px #F5C51815; }
+  .field-input::placeholder { color: #555; font-style: italic; }
+
+  .field-select option { background: var(--dark3); color: var(--white); }
+
+  .font-preview-box {
+    margin-top: 14px;
+    padding: 16px 18px;
+    background: var(--dark);
+    border: 1px dashed var(--border);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .font-preview-box span { color: var(--white); }
+  .font-preview-live { font-size: 22px; color: var(--gold); margin-top: 6px; letter-spacing: 1px; min-height: 32px; }
+
+  /* Textarea */
+  .textarea-input { width: 100%; background: var(--dark3); border: 1px solid var(--border); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 14px 18px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; resize: none; min-height: 100px; line-height: 1.6; }
+  .textarea-input:focus { border-color: var(--gold); box-shadow: 0 0 16px #F5C51815; }
+  .textarea-input::placeholder { color: #444; }
+
+  /* Submit */
+  .submit-wrap { margin-top: 60px; text-align: center; }
+  .submit-btn { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 3px; color: var(--dark); background: var(--gold); border: none; padding: 18px 56px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 30px #F5C51840; }
+  .submit-btn:hover { background: #FFD700; box-shadow: 0 0 50px #F5C51870; transform: translateY(-2px); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-note { margin-top: 14px; font-size: 12px; color: var(--muted); letter-spacing: 0.5px; }
+
+  /* Thank you */
+  .thankyou { display: none; text-align: center; padding: 80px 24px; animation: fadeUp 0.6s ease both; }
+  .thankyou.show { display: block; }
+  .thankyou-icon { font-size: 48px; margin-bottom: 24px; }
+  .thankyou h2 { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 3px; color: var(--gold); text-shadow: 0 0 40px var(--gold-glow); margin-bottom: 16px; }
+  .thankyou p { color: var(--muted); font-size: 15px; line-height: 1.7; max-width: 420px; margin: 0 auto; }
+
+  .summary-box { margin-top: 48px; background: var(--dark3); border: 1px solid var(--border); padding: 32px; text-align: left; }
+  .summary-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--gold); margin-bottom: 20px; }
+  .summary-item { display: flex; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .summary-item:last-child { border-bottom: none; }
+  .summary-q { color: var(--muted); flex: 0 0 180px; line-height: 1.5; }
+  .summary-a { color: var(--white); font-weight: 500; line-height: 1.5; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 60px 20px 40px; }
+    .options.grid, .font-fields-grid { grid-template-columns: 1fr; }
+    .progress-bar-wrap { padding: 12px 20px; }
+    .summary-q { flex: 0 0 120px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Video Production Brief</div>
+  <h1>CLIENT<br><span>ONBOARDING</span><br>SURVEY</h1>
+  <p>Please answer the following questions so we can create videos that truly represent your business and bring your vision to life.</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label"><span id="progressCount">0</span> / 14 answered</div>
+</div>
+
+<div class="container" id="formContainer">
+
+  <!-- ══ SECTION 1 ══ -->
+  <div class="section-label">
+    <div class="section-number">01</div>
+    <div class="section-title">Brand & Visual Identity</div>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q1 — Color scheme + palette builder -->
+  <div class="q-block">
+    <div class="q-label">1. What is your brand colour palette?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Every text overlay, glow effect, and background tint in your videos is built from your brand colours. Exact hex codes mean pixel-perfect consistency across every edit.</div>
+    <div class="options" data-name="q1" data-type="radio">
+      <label class="opt"><input type="radio" name="q1" value="Keep existing Gold & White"><div class="opt-dot"></div><span class="opt-text">Keep existing — Gold &amp; White (no changes needed)</span></label>
+      <label class="opt" id="opt-palette"><input type="radio" name="q1" value="custom_palette"><div class="opt-dot"></div><span class="opt-text">I want to define my exact colours — fill in below</span></label>
+      <label class="opt"><input type="radio" name="q1" value="Not sure - open to suggestions"><div class="opt-dot"></div><span class="opt-text">Not sure — I'm open to your suggestions</span></label>
+    </div>
+
+    <!-- Colour palette builder — shown when "define colours" is selected -->
+    <div class="palette-builder" id="paletteBuilder">
+      <div class="palette-title">▸ Your Colour Palette — click any swatch to pick a colour</div>
+      <div class="palette-swatches" id="paletteSwatches">
+        <!-- Swatch 1 — pre-filled with Dhooper gold -->
+        <div class="swatch-card" id="swatch-0">
+          <div class="swatch-preview" style="background:#F5C518;" onclick="openPicker(0)"></div>
+          <input type="color" class="swatch-color-input" id="picker-0" value="#F5C518" oninput="syncSwatch(0)">
+          <input class="swatch-hex" type="text" id="hex-0" value="#F5C518" placeholder="#000000" maxlength="7" oninput="syncFromHex(0)">
+          <input class="swatch-name" type="text" id="name-0" placeholder="Colour role (e.g. Primary Gold)" value="Primary Gold">
+        </div>
+        <!-- Swatch 2 -->
+        <div class="swatch-card" id="swatch-1">
+          <div class="swatch-preview" style="background:#F0EDE8;" onclick="openPicker(1)"></div>
+          <input type="color" class="swatch-color-input" id="picker-1" value="#F0EDE8" oninput="syncSwatch(1)">
+          <input class="swatch-hex" type="text" id="hex-1" value="#F0EDE8" placeholder="#000000" maxlength="7" oninput="syncFromHex(1)">
+          <input class="swatch-name" type="text" id="name-1" placeholder="Colour role (e.g. Text White)" value="Text White">
+        </div>
+        <!-- Swatch 3 -->
+        <div class="swatch-card" id="swatch-2">
+          <div class="swatch-preview" style="background:#0D0D0D;" onclick="openPicker(2)"></div>
+          <input type="color" class="swatch-color-input" id="picker-2" value="#0D0D0D" oninput="syncSwatch(2)">
+          <input class="swatch-hex" type="text" id="hex-2" value="#0D0D0D" placeholder="#000000" maxlength="7" oninput="syncFromHex(2)">
+          <input class="swatch-name" type="text" id="name-2" placeholder="Colour role (e.g. Background)" value="Background Dark">
+        </div>
+      </div>
+      <button type="button" class="palette-add-btn" onclick="addSwatch()">+ Add another colour</button>
+      <textarea class="palette-note" rows="2" id="paletteNote" placeholder="Any extra notes about colour usage — e.g. 'gold only for key words, white for body text, never use red'..."></textarea>
+    </div>
+  </div>
+
+  <!-- Q2 — Font (dedicated fields) -->
+  <div class="q-block">
+    <div class="q-label">2. Brand font details</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Using the exact same font across all videos is what makes a brand look consistent and professional — not just similar, but identical.</div>
+    <div class="options" data-name="q2" data-type="radio">
+      <label class="opt"><input type="radio" name="q2" value="match_existing"><div class="opt-dot"></div><span class="opt-text">Match the font already used in my existing videos</span></label>
+      <label class="opt" id="opt-hasfont"><input type="radio" name="q2" value="has_font"><div class="opt-dot"></div><span class="opt-text">I have a specific brand font — fill in the details below</span></label>
+      <label class="opt"><input type="radio" name="q2" value="no_preference"><div class="opt-dot"></div><span class="opt-text">No preference — you decide what fits best</span></label>
+    </div>
+
+    <!-- Font detail fields — shown when "I have a font" is selected -->
+    <div class="font-fields" id="fontFields">
+      <div class="font-fields-grid">
+
+        <div class="font-field-group">
+          <div class="field-label">Font Name</div>
+          <input class="field-input" id="ff-name" type="text" placeholder="e.g. Bebas Neue, Montserrat...">
+        </div>
+
+        <div class="font-field-group">
+          <div class="field-label">Font Weight</div>
+          <select class="field-select" id="ff-weight">
+            <option value="">— Select weight —</option>
+            <option>Thin (100)</option>
+            <option>Light (300)</option>
+            <option>Regular (400)</option>
+            <option>Medium (500)</option>
+            <option>Semi-Bold (600)</option>
+            <option>Bold (700)</option>
+            <option>Extra Bold (800)</option>
+            <option>Black (900)</option>
+            <option>Multiple weights used</option>
+          </select>
+        </div>
+
+        <div class="font-field-group">
+          <div class="field-label">Style</div>
+          <select class="field-select" id="ff-style">
+            <option value="">— Select style —</option>
+            <option>Normal / Upright</option>
+            <option>Italic</option>
+            <option>All Caps / Uppercase only</option>
+            <option>Mixed case</option>
+          </select>
+        </div>
+
+        <div class="font-field-group">
+          <div class="field-label">Typical Size on Screen</div>
+          <select class="field-select" id="ff-size">
+            <option value="">— Approximate size —</option>
+            <option>Small — subtle captions</option>
+            <option>Medium — body text overlays</option>
+            <option>Large — headline/title text</option>
+            <option>Very large — full-screen impact</option>
+            <option>Mixed sizes throughout</option>
+          </select>
+        </div>
+
+        <div class="font-field-group">
+          <div class="field-label">Letter Spacing</div>
+          <select class="field-select" id="ff-spacing">
+            <option value="">— Spacing feel —</option>
+            <option>Tight — letters close together</option>
+            <option>Normal — standard spacing</option>
+            <option>Wide — letters spread out</option>
+            <option>Very wide — editorial style</option>
+          </select>
+        </div>
+
+        <div class="font-field-group">
+          <div class="field-label">Where to get the font file?</div>
+          <select class="field-select" id="ff-source">
+            <option value="">— Source —</option>
+            <option>Google Fonts (free)</option>
+            <option>Adobe Fonts</option>
+            <option>I'll send you the file (.ttf / .otf)</option>
+            <option>I bought a license — I'll share it</option>
+            <option>Not sure</option>
+          </select>
+        </div>
+
+        <div class="font-field-group full">
+          <div class="field-label">Additional font notes</div>
+          <input class="field-input" id="ff-notes" type="text" placeholder="e.g. key words in bold, secondary text in light weight, glow effect on titles...">
+        </div>
+
+      </div>
+
+      <!-- Live font preview -->
+      <div class="font-preview-box">
+        <div>Preview — type the font name above and it will load if available on Google Fonts</div>
+        <div class="font-preview-live" id="fontPreviewLive">DHOOPER BCJ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2 ══ -->
+  <div class="section-label">
+    <div class="section-number">02</div>
+    <div class="section-title">Content & Footage</div>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-block">
+    <div class="q-label">3. What type of video content do you need?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Determines the entire structure and story of each video before editing begins.</div>
+    <div class="options" data-name="q3" data-type="radio">
+      <label class="opt"><input type="radio" name="q3" value="Process video"><div class="opt-dot"></div><span class="opt-text">Process video — consultation → design → build → result</span></label>
+      <label class="opt"><input type="radio" name="q3" value="Product showcase"><div class="opt-dot"></div><span class="opt-text">Product showcase — highlight specific pieces</span></label>
+      <label class="opt"><input type="radio" name="q3" value="Brand intro"><div class="opt-dot"></div><span class="opt-text">Brand intro — who we are & what we do</span></label>
+      <label class="opt"><input type="radio" name="q3" value="Mix of all"><div class="opt-dot"></div><span class="opt-text">Mix of all types depending on the week</span></label>
+      <label class="opt" data-other="q3"><input type="radio" name="q3" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll describe it</span></label>
+      <div class="custom-wrap" id="cw-q3"><input class="custom-input" type="text" data-key="q3" placeholder="Describe the type of content you have in mind..."></div>
+    </div>
+  </div>
+
+  <!-- Q4 — removed "plan a shoot" option -->
+  <div class="q-block">
+    <div class="q-label">4. Do you have workshop footage available (carpentry, craftsmanship, tools in action)?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Workshop B-roll is the most powerful footage for proving craftsmanship — it shows the skill behind every piece, not just the finished result.</div>
+    <div class="options" data-name="q4" data-type="radio">
+      <label class="opt"><input type="radio" name="q4" value="Yes, high quality"><div class="opt-dot"></div><span class="opt-text">Yes — high quality footage ready to share</span></label>
+      <label class="opt"><input type="radio" name="q4" value="Yes, basic phone footage"><div class="opt-dot"></div><span class="opt-text">Yes — basic phone footage</span></label>
+      <label class="opt"><input type="radio" name="q4" value="Partial — some clips available"><div class="opt-dot"></div><span class="opt-text">Partial — I have some clips but not much</span></label>
+      <label class="opt"><input type="radio" name="q4" value="No workshop footage yet"><div class="opt-dot"></div><span class="opt-text">No — not yet</span></label>
+      <label class="opt" data-other="q4"><input type="radio" name="q4" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll explain</span></label>
+      <div class="custom-wrap" id="cw-q4"><input class="custom-input" type="text" data-key="q4" placeholder="Describe what footage you have available..."></div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-block">
+    <div class="q-label">5. Do you have before/after videos or photos of completed client projects?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Before/after content is one of the highest-performing formats for home businesses — it shows real results, not just claims.</div>
+    <div class="options" data-name="q5" data-type="radio">
+      <label class="opt"><input type="radio" name="q5" value="Yes, videos and photos"><div class="opt-dot"></div><span class="opt-text">Yes — I have both videos and photos</span></label>
+      <label class="opt"><input type="radio" name="q5" value="Photos only"><div class="opt-dot"></div><span class="opt-text">Photos only</span></label>
+      <label class="opt"><input type="radio" name="q5" value="No"><div class="opt-dot"></div><span class="opt-text">No — not yet</span></label>
+      <label class="opt" data-other="q5"><input type="radio" name="q5" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll explain</span></label>
+      <div class="custom-wrap" id="cw-q5"><input class="custom-input" type="text" data-key="q5" placeholder="Describe what project media you have..."></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3 ══ -->
+  <div class="section-label">
+    <div class="section-number">03</div>
+    <div class="section-title">Team & Brand Personality</div>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-block">
+    <div class="q-label">6. Are family members or team members willing to appear on camera?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Determines whether we build a personal story-driven video or keep the focus entirely on products and craftsmanship.</div>
+    <div class="options" data-name="q6" data-type="radio">
+      <label class="opt"><input type="radio" name="q6" value="Yes, comfortable on camera"><div class="opt-dot"></div><span class="opt-text">Yes — comfortable on camera</span></label>
+      <label class="opt"><input type="radio" name="q6" value="Hands and work only"><div class="opt-dot"></div><span class="opt-text">Hands & work B-roll only — no faces</span></label>
+      <label class="opt"><input type="radio" name="q6" value="Not sure"><div class="opt-dot"></div><span class="opt-text">Not sure yet</span></label>
+      <label class="opt" data-other="q6"><input type="radio" name="q6" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll explain</span></label>
+      <div class="custom-wrap" id="cw-q6"><input class="custom-input" type="text" data-key="q6" placeholder="Describe your preference for on-camera presence..."></div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-block">
+    <div class="q-label">7. What tone should the videos communicate?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Tone shapes the music, pacing, color grading, and every creative choice in the edit.</div>
+    <div class="options" data-name="q7" data-type="radio">
+      <label class="opt"><input type="radio" name="q7" value="Purely professional"><div class="opt-dot"></div><span class="opt-text">Purely professional — sharp, premium, service-focused</span></label>
+      <label class="opt"><input type="radio" name="q7" value="Personal and family story"><div class="opt-dot"></div><span class="opt-text">Personal & warm — family story, human connection</span></label>
+      <label class="opt"><input type="radio" name="q7" value="Mix of both"><div class="opt-dot"></div><span class="opt-text">A mix of both</span></label>
+      <label class="opt" data-other="q7"><input type="radio" name="q7" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll describe it</span></label>
+      <div class="custom-wrap" id="cw-q7"><input class="custom-input" type="text" data-key="q7" placeholder="Describe the tone or feeling you want..."></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4 ══ -->
+  <div class="section-label">
+    <div class="section-number">04</div>
+    <div class="section-title">Products & Offering</div>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-block">
+    <div class="q-label">8. Which products should be featured most in videos?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Videos should lead with what your customers most want to see — and what best represents your craft.</div>
+    <div class="options grid" data-name="q8" data-type="checkbox">
+      <label class="opt"><input type="checkbox" name="q8" value="Wardrobes"><div class="opt-square"></div><span class="opt-text">Wardrobes</span></label>
+      <label class="opt"><input type="checkbox" name="q8" value="Home Offices"><div class="opt-square"></div><span class="opt-text">Home Offices</span></label>
+      <label class="opt"><input type="checkbox" name="q8" value="Bedroom furniture"><div class="opt-square"></div><span class="opt-text">Bedroom Furniture</span></label>
+      <label class="opt"><input type="checkbox" name="q8" value="Living room"><div class="opt-square"></div><span class="opt-text">Living Room</span></label>
+      <label class="opt"><input type="checkbox" name="q8" value="Kitchen"><div class="opt-square"></div><span class="opt-text">Kitchen</span></label>
+      <label class="opt full" data-other="q8"><input type="checkbox" name="q8" value="__other__"><div class="opt-square"></div><span class="opt-text">Other — I'll specify</span></label>
+      <div class="custom-wrap full" id="cw-q8"><input class="custom-input" type="text" data-key="q8" placeholder="Name the product(s) to feature..."></div>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-block">
+    <div class="q-label">9. What is your business model?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Custom-only pieces and standard packages carry completely different messages — the script and visual storytelling change accordingly.</div>
+    <div class="options" data-name="q9" data-type="radio">
+      <label class="opt"><input type="radio" name="q9" value="Fully custom only"><div class="opt-dot"></div><span class="opt-text">Fully custom only — every piece is made to order</span></label>
+      <label class="opt"><input type="radio" name="q9" value="Standard packages"><div class="opt-dot"></div><span class="opt-text">Standard packages only</span></label>
+      <label class="opt"><input type="radio" name="q9" value="Both custom and standard"><div class="opt-dot"></div><span class="opt-text">Both custom and standard options</span></label>
+      <label class="opt" data-other="q9"><input type="radio" name="q9" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll describe it</span></label>
+      <div class="custom-wrap" id="cw-q9"><input class="custom-input" type="text" data-key="q9" placeholder="Describe your business model..."></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5 ══ -->
+  <div class="section-label">
+    <div class="section-number">05</div>
+    <div class="section-title">Audience & Goals</div>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-block">
+    <div class="q-label">10. Who is your primary target audience?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Your audience determines the language, music, visual style, and message of every video.</div>
+    <div class="options" data-name="q10" data-type="radio">
+      <label class="opt"><input type="radio" name="q10" value="Homeowners"><div class="opt-dot"></div><span class="opt-text">Homeowners — people furnishing or renovating their home</span></label>
+      <label class="opt"><input type="radio" name="q10" value="Interior designers"><div class="opt-dot"></div><span class="opt-text">Interior designers & architects</span></label>
+      <label class="opt"><input type="radio" name="q10" value="Property developers"><div class="opt-dot"></div><span class="opt-text">Property developers</span></label>
+      <label class="opt"><input type="radio" name="q10" value="All of the above"><div class="opt-dot"></div><span class="opt-text">All of the above</span></label>
+      <label class="opt" data-other="q10"><input type="radio" name="q10" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll describe them</span></label>
+      <div class="custom-wrap" id="cw-q10"><input class="custom-input" type="text" data-key="q10" placeholder="Describe your ideal customer..."></div>
+    </div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="q-block">
+    <div class="q-label">11. What is the main goal of these videos?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> The goal shapes how every video ends — a soft brand close versus a strong call-to-action are very different endings.</div>
+    <div class="options" data-name="q11" data-type="radio">
+      <label class="opt"><input type="radio" name="q11" value="Get direct inquiries"><div class="opt-dot"></div><span class="opt-text">Get direct DMs / calls / leads</span></label>
+      <label class="opt"><input type="radio" name="q11" value="Build brand awareness"><div class="opt-dot"></div><span class="opt-text">Build brand awareness & trust over time</span></label>
+      <label class="opt"><input type="radio" name="q11" value="Both"><div class="opt-dot"></div><span class="opt-text">Both — leads now + brand for the long term</span></label>
+      <label class="opt" data-other="q11"><input type="radio" name="q11" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll describe it</span></label>
+      <div class="custom-wrap" id="cw-q11"><input class="custom-input" type="text" data-key="q11" placeholder="Describe what you want viewers to do after watching..."></div>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="q-block">
+    <div class="q-label">12. Will these videos be used for paid advertising?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Paid ad videos need a strong hook in the first 1–2 seconds and sometimes require multiple versions in different lengths (15s, 30s, 60s).</div>
+    <div class="options" data-name="q12" data-type="radio">
+      <label class="opt"><input type="radio" name="q12" value="Organic only"><div class="opt-dot"></div><span class="opt-text">Organic posts only</span></label>
+      <label class="opt"><input type="radio" name="q12" value="Paid ads only"><div class="opt-dot"></div><span class="opt-text">Paid ads only</span></label>
+      <label class="opt"><input type="radio" name="q12" value="Both organic and paid"><div class="opt-dot"></div><span class="opt-text">Both organic and paid ads</span></label>
+      <label class="opt" data-other="q12"><input type="radio" name="q12" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll explain</span></label>
+      <div class="custom-wrap" id="cw-q12"><input class="custom-input" type="text" data-key="q12" placeholder="Describe how the videos will be distributed..."></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6 ══ -->
+  <div class="section-label">
+    <div class="section-number">06</div>
+    <div class="section-title">Practical Details</div>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="q-block">
+    <div class="q-label">13. What is the quality of footage you can provide?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Footage quality sets the ceiling of how polished the final video can look — good editing can only go as far as the raw material allows.</div>
+    <div class="options" data-name="q13" data-type="radio">
+      <label class="opt"><input type="radio" name="q13" value="High quality camera footage"><div class="opt-dot"></div><span class="opt-text">High quality — filmed with a proper camera</span></label>
+      <label class="opt"><input type="radio" name="q13" value="Good quality smartphone"><div class="opt-dot"></div><span class="opt-text">Good quality smartphone footage</span></label>
+      <label class="opt"><input type="radio" name="q13" value="Mixed quality"><div class="opt-dot"></div><span class="opt-text">Mixed — some good, some basic</span></label>
+      <label class="opt" data-other="q13"><input type="radio" name="q13" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll describe it</span></label>
+      <div class="custom-wrap" id="cw-q13"><input class="custom-input" type="text" data-key="q13" placeholder="Describe what footage you can supply..."></div>
+    </div>
+  </div>
+
+  <!-- Q14 — Captions (was Q15) -->
+  <div class="q-block">
+    <div class="q-label">14. Should videos include captions / subtitles?</div>
+    <div class="q-hint"><strong>Why this matters:</strong> Most people watch Instagram Reels and Shorts on mute — captions keep them watching and significantly increase reach.</div>
+    <div class="options" data-name="q14" data-type="radio">
+      <label class="opt"><input type="radio" name="q14" value="Yes always"><div class="opt-dot"></div><span class="opt-text">Yes — always include captions</span></label>
+      <label class="opt"><input type="radio" name="q14" value="Sometimes"><div class="opt-dot"></div><span class="opt-text">Sometimes — depends on the video</span></label>
+      <label class="opt"><input type="radio" name="q14" value="No"><div class="opt-dot"></div><span class="opt-text">No — not needed</span></label>
+      <label class="opt" data-other="q14"><input type="radio" name="q14" value="__other__"><div class="opt-dot"></div><span class="opt-text">Other — I'll explain</span></label>
+      <div class="custom-wrap" id="cw-q14"><input class="custom-input" type="text" data-key="q14" placeholder="Describe your caption preference..."></div>
+    </div>
+  </div>
+
+  <!-- Extra notes -->
+  <div class="q-block" style="margin-top: 48px;">
+    <div class="q-label">Any additional notes or specific requests?</div>
+    <div class="q-hint">Reference videos you like, specific messages you want included, or anything else that helps me understand your vision.</div>
+    <textarea class="textarea-input" id="extraNotes" placeholder="Type here..." rows="4"></textarea>
+  </div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" onclick="submitSurvey()">SUBMIT BRIEF</button>
+    <p class="submit-note">Your answers will be reviewed carefully before the first edit begins.</p>
+  </div>
+
+</div>
+
+<!-- Thank You -->
+<div class="container thankyou" id="thankYou">
+  <div class="thankyou-icon">✦</div>
+  <h2>BRIEF RECEIVED</h2>
+  <p>Thank you for taking the time to fill this in. Every answer helps bring your vision to life more accurately.</p>
+  <div class="summary-box">
+    <h3>YOUR ANSWERS — SUMMARY</h3>
+    <div id="summaryContent"></div>
+  </div>
+</div>
+
+<script>
+  const TOTAL = 14;
+  const questionLabels = {
+    q1:"Brand colour palette", q2:"Brand font", q3:"Video content type",
+    q4:"Workshop footage", q5:"Before/after content", q6:"Team on camera",
+    q7:"Video tone", q8:"Priority products", q9:"Business model",
+    q10:"Target audience", q11:"Main goal", q12:"Paid ads usage",
+    q13:"Footage quality", q14:"Captions needed"
+  };
+
+  // ── Colour palette swatch helpers ──
+  var swatchCount = 3;
+
+  function openPicker(i) {
+    document.getElementById('picker-' + i).click();
+  }
+
+  function syncSwatch(i) {
+    var val = document.getElementById('picker-' + i).value;
+    document.getElementById('hex-' + i).value = val.toUpperCase();
+    document.getElementById('swatch-' + i).querySelector('.swatch-preview').style.background = val;
+  }
+
+  function syncFromHex(i) {
+    var val = document.getElementById('hex-' + i).value.trim();
+    if (!val.startsWith('#')) val = '#' + val;
+    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+      document.getElementById('picker-' + i).value = val;
+      document.getElementById('swatch-' + i).querySelector('.swatch-preview').style.background = val;
+    }
+  }
+
+  function addSwatch() {
+    if (swatchCount >= 7) return;
+    var i = swatchCount++;
+    var card = document.createElement('div');
+    card.className = 'swatch-card';
+    card.id = 'swatch-' + i;
+    card.innerHTML =
+      '<div class="swatch-preview" style="background:#888888;" onclick="openPicker(' + i + ')"></div>' +
+      '<input type="color" class="swatch-color-input" id="picker-' + i + '" value="#888888" oninput="syncSwatch(' + i + ')">' +
+      '<input class="swatch-hex" type="text" id="hex-' + i + '" value="#888888" placeholder="#000000" maxlength="7" oninput="syncFromHex(' + i + ')">' +
+      '<input class="swatch-name" type="text" id="name-' + i + '" placeholder="Colour role...">';
+    document.getElementById('paletteSwatches').appendChild(card);
+  }
+
+  function getPaletteSummary() {
+    var parts = [];
+    for (var i = 0; i < swatchCount; i++) {
+      var hexEl = document.getElementById('hex-' + i);
+      var nameEl = document.getElementById('name-' + i);
+      if (!hexEl) continue;
+      var hex = hexEl.value.trim() || '—';
+      var name = nameEl && nameEl.value.trim() ? nameEl.value.trim() : 'Colour ' + (i + 1);
+      parts.push(name + ': ' + hex);
+    }
+    var noteEl = document.getElementById('paletteNote');
+    var note = noteEl ? noteEl.value.trim() : '';
+    if (note) parts.push('Notes: ' + note);
+    return parts.join(' | ');
+  }
+
+  // ── Live font preview ──
+  var ffName = document.getElementById('ff-name');
+  var previewLive = document.getElementById('fontPreviewLive');
+  if (ffName && previewLive) {
+    ffName.addEventListener('input', function() {
+      var n = this.value.trim();
+      if (n.length > 2) {
+        var encoded = n.replace(/ /g, '+');
+        var link = document.getElementById('gfont-preview-link');
+        if (!link) {
+          link = document.createElement('link');
+          link.id = 'gfont-preview-link';
+          link.rel = 'stylesheet';
+          document.head.appendChild(link);
+        }
+        link.href = 'https://fonts.googleapis.com/css2?family=' + encoded + ':wght@400;700&display=swap';
+        previewLive.style.fontFamily = "'" + n + "', sans-serif";
+      }
+    });
+  }
+
+  // ── Option click handler ──
+  document.querySelectorAll('.opt').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      var input = this.querySelector('input');
+      if (!input) return;
+      var name = input.name;
+      var isOther = this.hasAttribute('data-other');
+
+      if (input.type === 'radio') {
+        document.querySelectorAll('input[name="' + name + '"]').forEach(function(i) {
+          i.closest('.opt').classList.remove('selected');
+        });
+        var cw = document.getElementById('cw-' + name);
+        if (cw) cw.classList.remove('visible');
+
+        input.checked = true;
+        this.classList.add('selected');
+
+        // Q1: show palette builder
+        if (name === 'q1') {
+          var pb = document.getElementById('paletteBuilder');
+          if (pb) pb.classList.toggle('visible', input.value === 'custom_palette');
+        }
+        // Q2: show font fields
+        if (name === 'q2') {
+          var ff = document.getElementById('fontFields');
+          if (ff) ff.classList.toggle('visible', input.value === 'has_font');
+        }
+
+        if (isOther && cw) {
+          cw.classList.add('visible');
+          setTimeout(function() { cw.querySelector('.custom-input').focus(); }, 50);
+        }
+      } else {
+        input.checked = !input.checked;
+        this.classList.toggle('selected', input.checked);
+        if (isOther) {
+          var cw2 = document.getElementById('cw-' + name);
+          if (cw2) {
+            cw2.classList.toggle('visible', input.checked);
+            if (input.checked) setTimeout(function() { cw2.querySelector('.custom-input').focus(); }, 50);
+          }
+        }
+      }
+      updateProgress();
+    });
+  });
+
+  function updateProgress() {
+    var answered = 0;
+    for (var i = 1; i <= TOTAL; i++) {
+      if (document.querySelector('input[name="q' + i + '"]:checked')) answered++;
+    }
+    document.getElementById('progressCount').textContent = answered;
+    document.getElementById('progressFill').style.width = (answered / TOTAL * 100) + '%';
+  }
+
+  function getFontSummary() {
+    var choice = document.querySelector('input[name="q2"]:checked');
+    if (!choice) return '—';
+    if (choice.value === 'match_existing') return 'Match existing video font';
+    if (choice.value === 'no_preference') return 'No preference — editor decides';
+    var parts = [];
+    var v;
+    v = document.getElementById('ff-name'); if (v && v.value.trim()) parts.push('Name: ' + v.value.trim());
+    v = document.getElementById('ff-weight'); if (v && v.value) parts.push('Weight: ' + v.value);
+    v = document.getElementById('ff-style'); if (v && v.value) parts.push('Style: ' + v.value);
+    v = document.getElementById('ff-size'); if (v && v.value) parts.push('Size: ' + v.value);
+    v = document.getElementById('ff-spacing'); if (v && v.value) parts.push('Spacing: ' + v.value);
+    v = document.getElementById('ff-source'); if (v && v.value) parts.push('Source: ' + v.value);
+    v = document.getElementById('ff-notes'); if (v && v.value.trim()) parts.push('Notes: ' + v.value.trim());
+    return parts.length ? parts.join(' · ') : 'Has brand font — details not filled in';
+  }
+
+  function getAnswers() {
+    var answers = {};
+    for (var i = 1; i <= TOTAL; i++) {
+      var name = 'q' + i;
+      if (name === 'q1') {
+        var c1 = document.querySelector('input[name="q1"]:checked');
+        if (!c1) { answers.q1 = '—'; continue; }
+        answers.q1 = c1.value === 'custom_palette' ? (getPaletteSummary() || 'Custom palette — no codes entered') : c1.value;
+        continue;
+      }
+      if (name === 'q2') { answers.q2 = getFontSummary(); continue; }
+      var block = document.querySelector('[data-name="' + name + '"]');
+      if (!block) continue;
+      var cw = document.getElementById('cw-' + name);
+      if (block.dataset.type === 'radio') {
+        var checked = document.querySelector('input[name="' + name + '"]:checked');
+        if (!checked) { answers[name] = '—'; continue; }
+        answers[name] = checked.value === '__other__' ? ((cw && cw.querySelector('.custom-input').value.trim()) || 'Other (not specified)') : checked.value;
+      } else {
+        var checkedAll = Array.from(document.querySelectorAll('input[name="' + name + '"]:checked'));
+        if (!checkedAll.length) { answers[name] = '—'; continue; }
+        answers[name] = checkedAll.map(function(c) {
+          return c.value === '__other__' ? ((cw && cw.querySelector('.custom-input').value.trim()) || 'Other') : c.value;
+        }).join(', ');
+      }
+    }
+    return answers;
+  }
+
+  function submitSurvey() {
+    var answers = getAnswers();
+    var unanswered = Object.values(answers).filter(function(v) { return v === '—'; }).length;
+    if (unanswered > 4) { alert('Please answer at least 10 questions before submitting.'); return; }
+
+    // Build summary HTML for the thank-you screen
+    var html = '';
+    for (var key in answers) {
+      html += '<div class="summary-item"><div class="summary-q">' + questionLabels[key] + '</div><div class="summary-a">' + answers[key] + '</div></div>';
+    }
+    var notes = document.getElementById('extraNotes').value.trim();
+    if (notes) html += '<div class="summary-item"><div class="summary-q">Additional notes</div><div class="summary-a">' + notes + '</div></div>';
+
+    // Build plain-text message for the email
+    var messageLines = [];
+    for (var k in answers) {
+      messageLines.push((questionLabels[k] || k) + ': ' + answers[k]);
+    }
+    if (notes) messageLines.push('Additional notes: ' + notes);
+    var messageText = messageLines.join('\n');
+
+    // Disable button to prevent double-submit
+    var btn = document.querySelector('.submit-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'SENDING…'; }
+
+    // ── Web3Forms submission ──
+    // Replace YOUR_ACCESS_KEY_HERE with your key from https://web3forms.com
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: '73141eb8-465c-414b-9b65-140d9da3cbd6',
+        subject: 'New Client Survey Submission',
+        from_name: 'Client Survey',
+        message: messageText
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      // Show thank-you screen regardless of email result
+      document.getElementById('summaryContent').innerHTML = html;
+      document.getElementById('formContainer').style.display = 'none';
+      document.getElementById('thankYou').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    })
+    .catch(function() {
+      // Still show thank-you even if network fails
+      document.getElementById('summaryContent').innerHTML = html;
+      document.getElementById('formContainer').style.display = 'none';
+      document.getElementById('thankYou').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+</script>
+</body>
+</html>
